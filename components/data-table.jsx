@@ -1,15 +1,6 @@
 "use client"
 
 import * as React from "react"
-
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-  FieldSeparator,
-} from "@/components/ui/field"
-
 import {
   closestCenter,
   DndContext,
@@ -103,8 +94,6 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs"
 
-import { useState } from "react"
-
 export const schema = z.object({
   id: z.number(),
   header: z.string(),
@@ -168,7 +157,7 @@ const columns = [
   },
   {
     accessorKey: "header",
-    header: "Title",
+    header: "Header",
     cell: ({ row }) => {
       return <TableCellViewer item={row.original} />;
     },
@@ -176,7 +165,7 @@ const columns = [
   },
   {
     accessorKey: "type",
-    header: "Author",
+    header: "Section Type",
     cell: ({ row }) => (
       <div className="w-32">
         <Badge variant="outline" className="text-muted-foreground px-1.5">
@@ -187,7 +176,7 @@ const columns = [
   },
   {
     accessorKey: "status",
-    header: "Publisher",
+    header: "Status",
     cell: ({ row }) => (
       <Badge variant="outline" className="text-muted-foreground px-1.5">
         {row.original.status === "Done" ? (
@@ -201,7 +190,7 @@ const columns = [
   },
   {
     accessorKey: "target",
-    header: () => <div className="w-full text-right">Year Published</div>,
+    header: () => <div className="w-full text-right">Target</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -224,7 +213,7 @@ const columns = [
   },
   {
     accessorKey: "limit",
-    header: () => <div className="w-full text-right">Stock</div>,
+    header: () => <div className="w-full text-right">Limit</div>,
     cell: ({ row }) => (
       <form
         onSubmit={(e) => {
@@ -247,7 +236,7 @@ const columns = [
   },
   {
     accessorKey: "reviewer",
-    header: "Image",
+    header: "Reviewer",
     cell: ({ row }) => {
       const isAssigned = row.original.reviewer !== "Assign reviewer"
 
@@ -387,8 +376,6 @@ export function DataTable({
     }
   }
 
-  const [showPopup, setShowPopup] = useState(false)
-
   return (
     <Tabs defaultValue="outline" className="w-full flex-col justify-start gap-6">
       <div className="flex items-center justify-between px-4 lg:px-6">
@@ -418,41 +405,8 @@ export function DataTable({
           <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
         </TabsList>
         <div className="flex items-center gap-2">
-          <Button onClick={() => setShowPopup(true)} className="justify-end flex">add book</Button>
-
-          {showPopup && (
-          <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-20">
-          <div className="bg-white p-6 h-[65%] w-[25%] m-10 rounded-md  shadow-lg relative z-30">
-            <Field className="justify-end">
-              <button onClick={() => setShowPopup(false)} type="submit" className="font-semibold rounded-full hover:bg-[#]">X</button>
-            </Field>
-            <h2 className="text-lg font-semibold mb-2 ">add books</h2>
-            <Field>
-              <FieldLabel htmlFor="email">Title</FieldLabel>
-              <Input id="email" type="email" name="email" className="" placeholder="Enter your email" required />
-            </Field>
-            <Field className="mt-2">
-            <FieldLabel htmlFor="email">Author</FieldLabel>
-              <Input id="email" type="email" name="email" placeholder="Enter your email" required />
-            </Field>
-            <Field className="mt-2">
-              <FieldLabel htmlFor="email">Publisher</FieldLabel>
-              <Input id="email" type="email" name="email" placeholder="Enter your email" required />
-            </Field>
-            <Field className="mt-2">
-              <FieldLabel htmlFor="email">Stock</FieldLabel>
-              <Input id="email" type="email" name="email" placeholder="Enter your email" required />
-            </Field>
-            <Field className="mt-4">
-              <Button onClick={() => setShowPopup(false)} type="submit" className="font-semibold">Submit</Button>
-            </Field>
-          </div>
-        </div>
-          )}
-            
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              
               <Button variant="outline" size="sm">
                 <IconLayoutColumns />
                 <span className="hidden lg:inline">Customize Columns</span>
@@ -708,7 +662,7 @@ function TableCellViewer({
           )}
           <form className="flex flex-col gap-4">
             <div className="flex flex-col gap-3">
-              <Label htmlFor="header"></Label>
+              <Label htmlFor="header">Header</Label>
               <Input id="header" defaultValue={item.header} />
             </div>
             <div className="grid grid-cols-2 gap-4">

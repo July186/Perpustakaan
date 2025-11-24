@@ -1,0 +1,3 @@
+- [ ] Modifikasi updateUsersSideAdmin di lib/action.js: Hapus redirect, return success/error, dan jika user adalah current user, update session.
+- [ ] Modifikasi UsersTable.jsx: Handle response dari action, jika success dan user adalah current, panggil update() dari useSession, lalu refresh users list.
+- [ ] Test: Pastikan setelah update, nav-user langsung update tanpa logout.

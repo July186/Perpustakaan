@@ -1,6 +1,6 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar_admin } from "@/components/app-sidebar-admin"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -16,10 +16,12 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 
-import DataTable from "@/components/BooksPanel";
+import BooksTable from "@/components/BooksTable";
 import UsersTable from "@/components/UsersTable";
 import BorrowsTable from "@/components/BorrowsTable";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { forbidden } from "next/navigation";
 
 export default function Page() {
   const [page, setPage] = useState("users");
@@ -30,9 +32,18 @@ export default function Page() {
     setGroup(groupName);
   }
 
+  const { data: session, status, update } = useSession();
+
+  const user = session?.user;
+
+  if (user?.role === "public") { 
+    forbidden();
+  }
+
+
   return (
     <SidebarProvider>
-      <AppSidebar onNavigate={handleNavigate} />
+      <AppSidebar_admin onNavigate={handleNavigate} user={user}/>
       <SidebarInset>
         <header
           className="bg-background sticky top-0 flex h-16 shrink-0 items-center gap-2 border-b px-4">
@@ -57,7 +68,7 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-4 p-4">
           {/* Skeleton*/}
           {page === "users" && <UsersTable />}
-          {page === "books" && <DataTable />}
+          {page === "books" && <BooksTable />}
           {page === "borrows" && <BorrowsTable />}
         </div>
       </SidebarInset>

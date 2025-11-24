@@ -10,26 +10,41 @@ import {
   FieldSeparator,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
-import { redirect } from "next/dist/server/api-utils"
 import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function LoginForm({
   className,
   ...props
 }) {
-  function handleLogin(formData) {
-    const respone = signIn("credentials", {
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  async function handleLogin(formData) {
+    setError("");
+
+    // PERBAIKAN 1: Tambahkan await untuk signIn
+    const response = await signIn("credentials", {
       redirect: false,
       email: formData.get("email"),
       password: formData.get("password")
     })
 
-    if (!respone.ok){
-      alert("fail")
-      return null
+    // PERBAIKAN 2: Sekarang response sudah berisi objek, bukan Promise
+    if (response.error) {
+      setError("Email atau password salah");
+      return
     }
 
-    redirect("/home")
+    // PERBAIKAN 3: Fetch session setelah login berhasil
+    const session = await fetch("/api/auth/session").then((res) => res.json());
+    
+    if (session?.user?.role === "admin") {
+      router.push("/dashboard");
+    } else {
+      router.push("/home")
+    }
   } 
 
   return (
@@ -38,7 +53,7 @@ export function LoginForm({
         <div className="flex flex-col items-center gap-1 text-center">
           <h1 className="text-2xl font-bold">Login to your account</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Welcome back!  Enter your email/username and password bellow to sign in.
+            Welcome back! Enter your email/username and password bellow to sign in.
           </p>
         </div>
         <Field>
@@ -54,6 +69,11 @@ export function LoginForm({
           </div>
           <Input id="password" type="password" name="password" placeholder="Enter your password" required />
         </Field>
+        {error && (
+          <div className="text-red-500 text-sm text-center">
+            {error}
+          </div>
+        )}
         <Field>
           <Button type="submit" className="font-semibold">Login</Button>
         </Field>
